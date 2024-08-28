@@ -1,5 +1,8 @@
-
 <h1>
-    <!-- Spread sheet title : {{ await doc.title}} -->
-     {{cell}}
+    Spread sheet title : {{title}} <br>
+    {{cell}} <br>
+    <span *ngFor="let people of arrayOfData">
+        {{people.name}} {{people.last_name}} {{people.email}} {{people.gender}} <br>
+
+    </span>
 </h1>
