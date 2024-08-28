@@ -29,9 +29,14 @@ describe('ServicesService', () => {
   });
 
   it('should get cell value', async () => {
-    const cellValue = await service.getCellsByGrid(0, 0);
+    await doc.loadInfo();
+    const sheet = doc.sheetsByIndex[0];
+    await sheet.loadCells('A1:B2');
 
-    const expectedValue = 'Hello';
+    const cellValue = await service.getCellsByGrid(0, 0);
+    const expectedCell = sheet.getCell(0, 0);
+
+    const expectedValue = expectedCell.value ? String(expectedCell.value) : '';
     const cellValueStr = cellValue ? String(cellValue) : '';
 
     expect(cellValueStr).toBe(expectedValue);
