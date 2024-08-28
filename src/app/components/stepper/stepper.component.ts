@@ -1,61 +1,64 @@
 import { Component, OnInit } from '@angular/core';
-import { MatStepperModule } from '@angular/material/stepper';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { gapi } from 'gapi-script';
+import { MatStepperModule } from '@angular/material/stepper';
+import { CommonModule } from '@angular/common';
+import { ServicesService } from '../../services/services.service';
 
 @Component({
   selector: 'app-stepper',
   standalone: true,
-  imports: [MatStepperModule, MatFormFieldModule, MatInputModule, MatButtonModule, CommonModule, ReactiveFormsModule],
+  imports: [MatStepperModule, MatFormFieldModule, MatInputModule, MatButtonModule, CommonModule],
   templateUrl: './stepper.component.html',
   styleUrls: ['./stepper.component.css']
 })
 export class StepperComponent implements OnInit {
+
   stepperForm: FormGroup;
-  stepData: string[] = [];
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private service: ServicesService) {
     this.stepperForm = this._formBuilder.group({
-      step1: [''],
-      step2: [''],
-      step3: ['']
+      step1: ['', Validators.required],
+      step2: ['', Validators.required],
+      step3: ['', Validators.required],
     });
   }
 
-  ngOnInit() {
-    this.loadGoogleSheetsData();
+  async ngOnInit() {
+    try {
+      await this.loadGoogleSheetsData();
+    } catch (error) {
+      console.error('Error loading Google Sheets data:', error);
+    }
   }
 
-  loadGoogleSheetsData() {
-    // Initialize the Google API client and load data from the Google Sheet
-    gapi.load('client', () => {
-      gapi.client.init({
-        apiKey: 'YOUR_API_KEY',
-        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
-      }).then(() => {
-        return gapi.client.sheets.spreadsheets.values.get({
-          spreadsheetId: 'YOUR_SPREADSHEET_ID',
-          range: 'Sheet1!A1:C1',
-        });
-      }).then((response: any) => {
-        this.stepData = response.result.values[0];
+  async loadGoogleSheetsData() {
+    try {
+      // Fetch the row data that corresponds to the steps
+      const data = await this.service.getAllRowData();
+
+      if (data.length >= 3) {
         this.stepperForm.patchValue({
-          step1: this.stepData[0],
-          step2: this.stepData[1],
-          step3: this.stepData[2],
+          step1: data[0]?.name || '',
+          step2: data[1]?.name || '',
+          step3: data[2]?.name || '',
         });
-      }, (error: any) => {
-        console.error('Error loading data from Google Sheets', error);
-      });
-    });
+      } else {
+        console.error('Insufficient data from Google Sheets to populate the stepper.');
+      }
+    } catch (error) {
+      console.error('Error fetching data from Google Sheets:', error);
+    }
   }
 
   onSubmit() {
-    console.log("Stepper data submitted:", this.stepperForm.value);
-    // Additional logic for when the process is complete
+    if (this.stepperForm.valid) {
+      console.log('Stepper data submitted:', this.stepperForm.value);
+      // Additional logic for when the form is submitted and the process is complete
+    } else {
+      console.error('Form is invalid. Please complete all steps.');
+    }
   }
 }

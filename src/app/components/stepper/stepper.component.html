@@ -10,6 +10,7 @@
         <button mat-button matStepperNext>Next</button>
       </div>
     </form>
+    <p>Step 1 Control Valid: {{ stepperForm.get('step1')!.valid }}</p>
   </mat-step>
 
   <mat-step [stepControl]="stepperForm.get('step2')!">
@@ -24,6 +25,7 @@
         <button mat-button matStepperNext>Next</button>
       </div>
     </form>
+    <p>Step 2 Control Valid: {{ stepperForm.get('step2')!.valid }}</p>
   </mat-step>
 
   <mat-step [stepControl]="stepperForm.get('step3')!">
@@ -38,5 +40,6 @@
         <button mat-button type="submit">Finish</button>
       </div>
     </form>
+    <p>Step 3 Control Valid: {{ stepperForm.get('step3')!.valid }}</p>
   </mat-step>
 </mat-horizontal-stepper>
