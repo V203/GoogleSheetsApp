@@ -58,4 +58,21 @@ describe('ServicesService', () => {
 
     expect(cellValueStr).toBe(expectedValue);
   });
+
+  it('should handle error while getting cell value', async () => {
+    spyOn(service, 'getCellsByGrid').and.callFake(async () => {
+      throw new Error('Error getting cells');
+    });
+
+    try {
+      await service.getCellsByGrid(0, 0);
+      fail('Expected error was not thrown');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        expect(error.message).toBe('Error getting cells');
+      } else {
+        fail('Expected error to be an instance of Error');
+      }
+    }
+  });
 });
