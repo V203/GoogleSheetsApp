@@ -45,7 +45,7 @@ describe('ServicesService', () => {
     }
   });
 
-  it('should get cell value for cell A1', async () => {
+  it('should get cell value', async () => {
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
     await sheet.loadCells('A1:B2');
