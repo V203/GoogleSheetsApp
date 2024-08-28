@@ -28,6 +28,23 @@ describe('ServicesService', () => {
     expect(title).toBe(doc.title);
   });
 
+  it('should handle error while getting the sheet title', async () => {
+    spyOn(service, 'getSheetTitle').and.callFake(async () => {
+      throw new Error('Failed to get the sheet title');
+    });
+
+    try {
+      await service.getSheetTitle();
+      fail('Expected error was not thrown');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        expect(error.message).toBe('Failed to get the sheet title');
+      } else {
+        fail('Expected error to be an instance of Error');
+      }
+    }
+  });
+
   it('should get cell value', async () => {
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
