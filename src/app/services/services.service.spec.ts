@@ -21,9 +21,11 @@ describe('ServicesService', () => {
   });
 
   it('should get the sheet title', async () => {
+    await doc.loadInfo();
+    console.log(doc.title);
     const title = await service.getSheetTitle();
 
-    expect(title).toBe('g-sheet');
+    expect(title).toBe(doc.title);
   });
 
   it('should get cell value', async () => {
