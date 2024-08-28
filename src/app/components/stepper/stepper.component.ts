@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,7 +10,7 @@ import { ServicesService } from '../../services/services.service';
 @Component({
   selector: 'app-stepper',
   standalone: true,
-  imports: [MatStepperModule, MatFormFieldModule, MatInputModule, MatButtonModule, CommonModule],
+  imports: [MatStepperModule, MatFormFieldModule, MatInputModule, MatButtonModule, CommonModule, ReactiveFormsModule],
   templateUrl: './stepper.component.html',
   styleUrls: ['./stepper.component.css']
 })
