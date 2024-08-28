@@ -1,17 +1,42 @@
-<mat-horizontal-stepper>
-    <mat-step label="Step 1">
-      <p>Step 1 content</p>
-      <button mat-button matStepperNext>Next</button>
-    </mat-step>
-    <mat-step label="Step 2">
-      <p>Step 2 content</p>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button matStepperNext>Next</button>
-    </mat-step>
-    <mat-step label="Step 3">
-      <p>Step 3 content</p>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button>Finish</button>
-    </mat-step>
-  </mat-horizontal-stepper>
-  
+<mat-horizontal-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="stepperForm.get('step1')!">
+    <form [formGroup]="stepperForm" (ngSubmit)="stepper.next()">
+      <ng-template matStepLabel>Step 1</ng-template>
+      <mat-form-field>
+        <mat-label>Step 1</mat-label>
+        <input matInput formControlName="step1" placeholder="Step 1 data">
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="stepperForm.get('step2')!">
+    <form [formGroup]="stepperForm" (ngSubmit)="stepper.next()">
+      <ng-template matStepLabel>Step 2</ng-template>
+      <mat-form-field>
+        <mat-label>Step 2</mat-label>
+        <input matInput formControlName="step2" placeholder="Step 2 data">
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="stepperForm.get('step3')!">
+    <form [formGroup]="stepperForm" (ngSubmit)="onSubmit()">
+      <ng-template matStepLabel>Step 3</ng-template>
+      <mat-form-field>
+        <mat-label>Step 3</mat-label>
+        <input matInput formControlName="step3" placeholder="Step 3 data">
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button type="submit">Finish</button>
+      </div>
+    </form>
+  </mat-step>
+</mat-horizontal-stepper>
