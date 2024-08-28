@@ -4,13 +4,12 @@
       <ng-template matStepLabel>Step 1</ng-template>
       <mat-form-field>
         <mat-label>Step 1</mat-label>
-        <input matInput formControlName="step1" placeholder="Step 1 data">
+        <input matInput formControlName="step1" placeholder="Name">
       </mat-form-field>
       <div>
         <button mat-button matStepperNext>Next</button>
       </div>
     </form>
-    <p>Step 1 Control Valid: {{ stepperForm.get('step1')!.valid }}</p>
   </mat-step>
 
   <mat-step [stepControl]="stepperForm.get('step2')!">
@@ -18,7 +17,7 @@
       <ng-template matStepLabel>Step 2</ng-template>
       <mat-form-field>
         <mat-label>Step 2</mat-label>
-        <input matInput formControlName="step2" placeholder="Step 2 data">
+        <input matInput formControlName="step2" placeholder="Last Name">
       </mat-form-field>
       <div>
         <button mat-button matStepperPrevious>Back</button>
@@ -33,7 +32,7 @@
       <ng-template matStepLabel>Step 3</ng-template>
       <mat-form-field>
         <mat-label>Step 3</mat-label>
-        <input matInput formControlName="step3" placeholder="Step 3 data">
+        <input matInput formControlName="step3" placeholder="Email">
       </mat-form-field>
       <div>
         <button mat-button matStepperPrevious>Back</button>
