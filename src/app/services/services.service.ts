@@ -13,12 +13,14 @@ export class ServicesService {
 
 
   constructor() {
+
     enum headerParams {
       name = "name",
       email = "email",
       last_name = "last name",
       gender = "gender"
     };
+
     this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key });
     this.doc.loadInfo()
   }
@@ -114,14 +116,12 @@ export class ServicesService {
       let sheet = await this.doc.sheetsByIndex[0].getRows({ offset: 0, limit: 2 });
       console.log(await sheet[row].get(headerParams));
       return await sheet[row].get(headerParams)
-
     } catch (error) {
       console.log(error);
     }
-
   };
 
-
+  // returns all rows from the excel spread sheet
   async getAllRowData() {
     try {
       this.doc.loadInfo();
