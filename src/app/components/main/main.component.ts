@@ -17,10 +17,11 @@ export class MainComponent implements OnInit {
   doc: GoogleSpreadsheet;
 
   service = inject(ServicesService);
-
+  displayedColumns = ["name", "last_name", "email", "gender"];
   title:string = "";
   cell:string = "";
   arrayOfData:any;
+  // dataSource = this.arrayOfData
   constructor() {
     this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key })
     

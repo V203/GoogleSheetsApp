@@ -1,8 +1,29 @@
-<h1>
-    Spread sheet title : {{title}} <br>
-    {{cell}} <br>
-    <span *ngFor="let people of arrayOfData">
-        {{people.name}} {{people.last_name}} {{people.email}} {{people.gender}} <br>
 
-    </span>
-</h1>
+<table mat-table [dataSource]="arrayOfData" class="mat-elevation-z8">
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name. </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="last_name">
+        <th mat-header-cell *matHeaderCellDef> last_name </th>
+        <td mat-cell *matCellDef="let element"> {{element.last_name}} </td>
+    </ng-container>
+
+    <!-- email Column -->
+    <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> email </th>
+        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+    </ng-container>
+
+    <!-- gender Column -->
+    <ng-container matColumnDef="gender">
+        <th mat-header-cell *matHeaderCellDef> gender </th>
+        <td mat-cell *matCellDef="let element"> {{element.gender}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
