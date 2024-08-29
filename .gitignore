@@ -46,4 +46,3 @@ Thumbs.db
 /playwright/.cache/
 
 /tests-examples/
-/src/environments/environment.ts
