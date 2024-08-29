@@ -88,4 +88,10 @@ Thumbs.db
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+<<<<<<< HEAD
 >>>>>>> origin/master
+=======
+
+/tests-examples/
+/src/environments/environment.ts
+>>>>>>> 6ae1c93 (Removed examplestests from tracking)
