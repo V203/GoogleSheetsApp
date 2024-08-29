@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,15 +15,24 @@ import { ServicesService } from '../../services/services.service';
 @Component({
   selector: 'app-stepper',
   standalone: true,
-  imports: [MatStepperModule, MatFormFieldModule, MatInputModule, MatButtonModule, CommonModule, ReactiveFormsModule],
+  imports: [
+    MatStepperModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    CommonModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './stepper.component.html',
-  styleUrls: ['./stepper.component.css']
+  styleUrls: ['./stepper.component.css'],
 })
 export class StepperComponent implements OnInit {
-
   stepperForm: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder, private service: ServicesService) {
+  constructor(
+    private _formBuilder: FormBuilder,
+    private service: ServicesService
+  ) {
     this.stepperForm = this._formBuilder.group({
       step1: ['', Validators.required],
       step2: ['', Validators.required],
@@ -46,7 +60,9 @@ export class StepperComponent implements OnInit {
           step3: data[2]?.name || '',
         });
       } else {
-        console.error('Insufficient data from Google Sheets to populate the stepper.');
+        console.error(
+          'Insufficient data from Google Sheets to populate the stepper.'
+        );
       }
     } catch (error) {
       console.error('Error fetching data from Google Sheets:', error);
