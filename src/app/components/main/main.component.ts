@@ -3,11 +3,12 @@ import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { ServicesService } from '../../services/services.service';
 import { environment } from '../../../environments/environment';
 import { NgFor } from '@angular/common';
+import {MatTableModule} from '@angular/material/table';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports:[NgFor],
+  imports:[NgFor, MatTableModule],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
@@ -21,7 +22,7 @@ export class MainComponent implements OnInit {
   cell:string = "";
   arrayOfData:any;
   constructor() {
-    this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key });
+    this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key })
     
   }
   
