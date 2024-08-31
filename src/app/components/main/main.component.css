@@ -1,0 +1,6 @@
+.btn-group{
+    display: inline;
+    row-gap: 4px;
+    flex-direction: row;
+    margin-right: 4px;
+}
