@@ -50,7 +50,7 @@ describe('ServicesService', () => {
     const sheet = doc.sheetsByIndex[0];
     await sheet.loadCells('A1:B2');
 
-    const cellValue = await service.getCellsByGrid(0, 0);
+    const cellValue = await service.getCellByGrid(0, 0);
     const expectedCell = sheet.getCell(0, 0);
 
     const expectedValue = expectedCell.value ? String(expectedCell.value) : '';
@@ -64,7 +64,7 @@ describe('ServicesService', () => {
     const sheet = doc.sheetsByIndex[0];
     await sheet.loadCells('A1:B2');
 
-    const cellValue = await service.getCellsByGrid(1, 1);
+    const cellValue = await service.getCellByGrid(1, 1);
     const expectedCell = sheet.getCell(1, 1);
 
     const expectedValue = expectedCell.value ? String(expectedCell.value) : '';
@@ -74,12 +74,12 @@ describe('ServicesService', () => {
   });
 
   it('should handle error while getting cell value', async () => {
-    spyOn(service, 'getCellsByGrid').and.callFake(async () => {
+    spyOn(service, 'getCellByGrid').and.callFake(async () => {
       throw new Error('Error getting cells');
     });
 
     try {
-      await service.getCellsByGrid(0, 0);
+      await service.getCellByGrid(0, 0);
       fail('Expected error was not thrown');
     } catch (error: unknown) {
       if (error instanceof Error) {

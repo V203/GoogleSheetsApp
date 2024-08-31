@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { environment } from '../../environments/environment';
+import { GoogleAuthOptions, GoogleAuth } from 'google-auth-library';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { IUser } from '../models/iuser';
+
 
 
 @Injectable({
@@ -10,17 +15,8 @@ export class ServicesService {
 
   doc: GoogleSpreadsheet
   title!: string
-
-
-  constructor() {
-
-    enum headerParams {
-      name = "name",
-      email = "email",
-      last_name = "last name",
-      gender = "gender"
-    };
-
+  
+  constructor(private http: HttpClient) {
     this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key });
     this.doc.loadInfo()
   }
@@ -38,15 +34,10 @@ export class ServicesService {
     await this.doc.loadInfo();
   }
 
-
-
-
   async getSheetTitle(): Promise<string> {
     try {
-
       await this.doc.loadInfo();
       this.title = this.doc.title
-
       return this.title;
     } catch (error) {
       console.error('Error accessing Google Sheets:', error);
@@ -71,7 +62,7 @@ export class ServicesService {
       throw error;
     }
   }
-
+  // to be fully implemted
   async insertIntoCell() {
     try {
       await this.doc.loadInfo();
@@ -126,10 +117,10 @@ export class ServicesService {
     try {
       this.doc.loadInfo();
       let sheet = this.doc.sheetsByIndex[0]
-      
+
       let rows = await sheet.getCellsInRange("A2:Z")
-      
-      const keys = ["name", "last_name", "email", "gender"];
+
+      const keys = ["name", "last_name", "email"];
 
       const newRows = rows.map((item: any) => {
         return keys.reduce((obj: any, key, index) => {
@@ -137,14 +128,36 @@ export class ServicesService {
           return obj;
         }, {});
       });
-      
+
       return newRows
 
     } catch (error) {
       console.log(error);
     }
   }
+// service.insertUser("John", "Doe", "jd@.co.za")
+   insertUser(name: string, last_name: string, email: string): Observable<IUser> {
 
+    return this.http.post<IUser>(environment.CONNECTION_URL, {
+      name,
+      last_name,
+      email
+
+    })
+    
+  }
+//deletes the user by taking an index number
+  deleteUser(index:number){
+    return this.http.delete(`${environment.CONNECTION_URL}/${index}`)
+  }
+//updates the user by taking in an index number and other name, string and email
+  updateUser(index:number,name:string,last_name:string,email:string){
+    return this.http.put(`${environment.CONNECTION_URL}/${index}`,{
+      name,
+      last_name,
+      email
+    })
+  }
 
 
 
