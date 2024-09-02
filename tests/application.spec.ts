@@ -28,7 +28,8 @@ test('should have a submit button for updating cells', async ({ page }) => {
 
   await page.waitForTimeout(2000);
 
-  const submitButtonLocator = page.locator('button[type="submit"]');
+  // const submitButtonLocator = page.locator('button[type="submit"]');
+  const submitButtonLocator = page.locator('.mat-stepper-next');
 
   await expect(submitButtonLocator).toBeVisible();
 });

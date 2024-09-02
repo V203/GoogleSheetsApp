@@ -73,6 +73,17 @@ describe('ServicesService', () => {
     expect(cellValueStr).toBe(expectedValue);
   });
 
+  it('should get cell value for given header "name"', async () => {
+    await doc.loadInfo();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+
+    const expectedValue = rows[0].get('name');
+    const cellValue = await service.getRowByNumberAndHeader(0, 'name');
+
+    expect(cellValue).toBe(expectedValue);
+  });
+
   it('should handle error while getting cell value', async () => {
     spyOn(service, 'getCellByGrid').and.callFake(async () => {
       throw new Error('Error getting cells');
