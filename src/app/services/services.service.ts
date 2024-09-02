@@ -1,43 +1,41 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
+import { of, from, Observable, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { GoogleAuthOptions, GoogleAuth } from 'google-auth-library';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { IUser } from '../models/iuser';
 
-
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ServicesService {
+  doc: GoogleSpreadsheet;
+  title!: string;
 
-  doc: GoogleSpreadsheet
-  title!: string
-  
   constructor(private http: HttpClient) {
-    this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key });
-    this.doc.loadInfo()
+    this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, {
+      apiKey: environment.api_key,
+    });
   }
 
-  async ngOnInit() {
-    try {
-      this.doc.title
-    } catch (error) {
-      console.log(error);
-
-    }
+  ngOnInit() {
+    this.loadDocs();
   }
 
   async loadDocs() {
-    await this.doc.loadInfo();
+    try {
+      await this.doc.loadInfo();
+    } catch (error) {
+      console.error('Error loading Google Sheets document:', error);
+      throw new Error('Failed to load Google Sheets document');
+    }
   }
 
   async getSheetTitle(): Promise<string> {
     try {
       await this.doc.loadInfo();
-      this.title = this.doc.title
+      this.title = this.doc.title;
       return this.title;
     } catch (error) {
       console.error('Error accessing Google Sheets:', error);
@@ -51,8 +49,8 @@ export class ServicesService {
       await this.doc.loadInfo();
       // sheet first sheet in our sheets by index
       let sheet = this.doc.sheetsByIndex[0];
-      //load cells into cache 
-      await sheet.loadCells("A1:B2");
+      //load cells into cache
+      await sheet.loadCells('A1:B2');
       //get row and column by index number
       let cell = sheet.getCell(row, col);
       // return cell as a value
@@ -70,13 +68,11 @@ export class ServicesService {
       // console.log(await sheetsByIndex[0].getRows());
       let sheet = sheetsByIndex[0];
       let rows = await sheet.getRows();
-      rows[0].set("A4", "hello");
-
+      rows[0].set('A4', 'hello');
     } catch (error) {
       console.log(error);
-
     }
-  };
+  }
 
   // to be fully implemented
   async createSheet(sheetHeaders: Array<string>) {
@@ -87,40 +83,43 @@ export class ServicesService {
 
       let sheet = this.doc.sheetsByIndex[0];
 
-      await sheet.loadCells()
+      await sheet.loadCells();
       // await sheet.addRow()
       let rows = await sheet.getRows();
-      rows[1]
-      rows[0].set("A4", "hello");
-      await rows[0].save()
+      rows[1];
+      rows[0].set('A4', 'hello');
+      await rows[0].save();
       console.log();
       // console.log(rows[1].get("hello"));
       // await rows[3].save()
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   async getRowByNumberAndHeader(row: number, headerParams: string) {
     try {
       this.doc.loadInfo();
-      let sheet = await this.doc.sheetsByIndex[0].getRows({ offset: 0, limit: 2 });
-      console.log(await sheet[row].get(headerParams));
-      return await sheet[row].get(headerParams)
+      let sheet = await this.doc.sheetsByIndex[0].getRows({
+        offset: 0,
+        limit: 2,
+      });
+      
+      return await sheet[row].get(headerParams);
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   // returns all rows from the excel spread sheet
   async getAllRowData() {
     try {
-      this.doc.loadInfo();
-      let sheet = this.doc.sheetsByIndex[0]
+      await this.doc.loadInfo();
+      let sheet = this.doc.sheetsByIndex[0];
 
-      let rows = await sheet.getCellsInRange("A2:Z")
+      let rows = await sheet.getCellsInRange('A2:Z');
 
-      const keys = ["name", "last_name", "email"];
+      const keys = ['name', 'last_name', 'email'];
 
       const newRows = rows.map((item: any) => {
         return keys.reduce((obj: any, key, index) => {
@@ -129,36 +128,63 @@ export class ServicesService {
         }, {});
       });
 
-      return newRows
-
+      return newRows;
     } catch (error) {
       console.log(error);
     }
   }
-// service.insertUser("John", "Doe", "jd@.co.za")
-   insertUser(name: string, last_name: string, email: string): Observable<IUser> {
-
+  // service.insertUser("John", "Doe", "jd@.co.za")
+  insertUser(
+    name: string,
+    last_name: string,
+    email: string,
+  ): Observable<IUser> {
     return this.http.post<IUser>(environment.CONNECTION_URL, {
       name,
       last_name,
-      email
+      email,
+    });
+  }
 
-    })
-    
+  //deletes the user by taking an index number
+  deleteUser(index: number) {
+    return this.http.delete(`${environment.CONNECTION_URL}/${index}`);
   }
-//deletes the user by taking an index number
-  deleteUser(index:number){
-    return this.http.delete(`${environment.CONNECTION_URL}/${index}`)
-  }
-//updates the user by taking in an index number and other name, string and email
-  updateUser(index:number,name:string,last_name:string,email:string){
-    return this.http.put(`${environment.CONNECTION_URL}/${index}`,{
+  //updates the user by taking in an index number and other name, string and email
+  updateUser(index: number, name: string, last_name: string, email: string) {
+    return this.http.put(`${environment.CONNECTION_URL}/${index}`, {
       name,
       last_name,
-      email
-    })
+      email,
+    });
   }
 
+  addRowToSheet(data: { name: string; last_name: string; email: string; }): Observable<any> {
+    return from(this.loadDocs()).pipe(
+      switchMap(() => {
+        this.doc.loadInfo();
+        console.log('Loaded docs:', this.doc.title);
+        const sheet = this.doc.sheetsByIndex[0];
+        console.log('Loaded sheet:', sheet.title);
+        return from(sheet.addRow({
+          name: data.name,
+          'last name': data.last_name,
+          email: data.email,
+        }));
+      }),
+      map(addedRow => {
+        console.log('Added row:', addedRow);
+        return addedRow; // Or any transformation you need
+      }),
+      catchError(error => {
+        console.error('Error adding row to Google Sheets:', error);
+        return throwError(() => new Error('Failed to add data to Google Sheets'));
+      })
+    );
+  }
 
+  addRowToSheetTest() {
+    this.addRowToSheet({ name: 'John', last_name: 'Doe', email: 'john.doe@example.com' });
+  }
 
 }

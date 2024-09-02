@@ -1,15 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  Validators,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
-import { CommonModule } from '@angular/common';
 import { ServicesService } from '../../services/services.service';
 
 @Component({
@@ -31,7 +31,7 @@ export class StepperComponent implements OnInit {
 
   constructor(
     private _formBuilder: FormBuilder,
-    private service: ServicesService
+    private service: ServicesService,
   ) {
     this.stepperForm = this._formBuilder.group({
       step1: ['', Validators.required],
@@ -56,12 +56,12 @@ export class StepperComponent implements OnInit {
       if (data.length >= 3) {
         this.stepperForm.patchValue({
           step1: data[0]?.name || '',
-          step2: data[1]?.name || '',
-          step3: data[2]?.name || '',
+          step2: data[1]?.last_name || '',
+          step3: data[2]?.email || '',
         });
       } else {
         console.error(
-          'Insufficient data from Google Sheets to populate the stepper.'
+          'Insufficient data from Google Sheets to populate the stepper.',
         );
       }
     } catch (error) {
@@ -69,12 +69,37 @@ export class StepperComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.stepperForm.valid) {
-      console.log('Stepper data submitted:', this.stepperForm.value);
-      // Additional logic for when the form is submitted and the process is complete
+      this.service.addRowToSheet({
+        name: this.stepperForm.value.step1,
+        last_name: this.stepperForm.value.step2,
+        email: this.stepperForm.value.step3,
+      }).subscribe({
+        next: (result) => {
+          console.log('Row successfully added:', result);
+        },
+        error: (error) => {
+          console.error('Error adding row:', error);
+        }
+      });      
     } else {
       console.error('Form is invalid. Please complete all steps.');
     }
   }
+  
+
+  // async onSubmit() {
+  //   if (this.stepperForm.valid) {
+  //     try {
+  //       this.service.addUser(this.stepperForm.value.step1, this.stepperForm.value.step2, this.stepperForm.value.step3);
+  //     } catch (error) {
+  //       console.error('Unexpected error during submission:', error);
+  //     }
+  //   } else {
+  //     console.error('Form is invalid. Please complete all steps.');
+  //   }
+  // }
+
+
 }
