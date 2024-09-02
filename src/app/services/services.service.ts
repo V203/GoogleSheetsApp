@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { environment } from '../../environments/environment';
 import { GoogleAuthOptions, GoogleAuth } from 'google-auth-library';
@@ -13,11 +13,14 @@ import { IUser } from '../models/iuser';
 })
 export class ServicesService {
 
-  doc: GoogleSpreadsheet
-  title!: string
+  doc: GoogleSpreadsheet;
+  title!: string;
+
+  updateBoolDisplay = signal<boolean>(false)
   
   constructor(private http: HttpClient) {
     this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key });
+    
     this.doc.loadInfo()
   }
 
@@ -157,8 +160,9 @@ export class ServicesService {
       last_name,
       email
     })
-  }
+  };
 
 
+ 
 
 }
