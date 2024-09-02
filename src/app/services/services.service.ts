@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { environment } from '../../environments/environment';
 import { GoogleAuthOptions, GoogleAuth } from 'google-auth-library';
@@ -10,14 +10,16 @@ import { IUser } from '../models/iuser';
   providedIn: 'root',
 })
 export class ServicesService {
+
   doc: GoogleSpreadsheet;
   title!: string;
 
+  updateBoolDisplay = signal<boolean>(false)
+  
   constructor(private http: HttpClient) {
-    this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, {
-      apiKey: environment.api_key,
-    });
-    this.doc.loadInfo();
+    this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key });
+    
+    this.doc.loadInfo()
   }
 
   async ngOnInit() {
@@ -154,7 +156,11 @@ export class ServicesService {
     return this.http.put(`${environment.CONNECTION_URL}/${index}`, {
       name,
       last_name,
-      email,
-    });
-  }
+      email
+    })
+  };
+
+
+ 
+
 }
