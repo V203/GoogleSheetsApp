@@ -1,4 +1,3 @@
-
 <table mat-table [dataSource]="arrayOfData" class="mat-elevation-z8">
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Name. </th>
@@ -19,12 +18,34 @@
 
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> actions </th>
-        <td  mat-cell *matCellDef="let element;let i = index"> <button  mat-mini-fab (click)="deleteUser(i)" class="btn-group"> <mat-icon>delete</mat-icon></button></td>
+        <td mat-cell *matCellDef="let element;let i = index"> <button itemid=`deleteBtnID+${i}` mat-mini-fab (click)="deleteUser(i)"
+                class="btn-group"> <mat-icon>delete</mat-icon></button>
+            <button itemid=`updatedBtnID+${i}`  mat-mini-fab (click)="toggleBoolDisplayV2(element,i)" class="btn-group"> <mat-icon>update</mat-icon></button>
+        </td>
     </ng-container>
-
-  
-
+    
+    
+    
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; let i = index;columns: displayedColumns;" onclick=""></tr>
-
+    
 </table>
+<div class="overlay" *ngIf="selectedUser">
+    <form  [formGroup]="formUpdate" (ngSubmit)="onSubmit()"class="to-center formstyle">
+        <h3>
+            Update User.
+        </h3>
+        <div class="close-btn" (click)="selectedUser = null">
+            <h6>
+                X
+            </h6>
+        </div>
+        <label for="name">Name</label>
+        <input type="text" id="name" formControlName="name" placeholder="Peter">
+        <label type="text" for="last_name">Last name</label>
+        <input  type="text" id="last_name" formControlName="last_name" placeholder="Sander">
+        <label for="email">email</label>
+        <input type="text" id="email"  formControlName="email" placeholder="psander@mail.coza">
+        <button type="submit">Update User</button>
+    </form>
+</div>
