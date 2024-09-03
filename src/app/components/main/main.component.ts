@@ -139,6 +139,7 @@ export class MainComponent implements OnInit {
         
       }
     })
+    this.selectedUser = null
     
   }
 
