@@ -159,29 +159,45 @@ export class ServicesService {
     });
   }
 
+  /**
+   * Adds a row to the Google Sheets document.
+   *
+   * @param data Object with the data to be inserted into the sheet.
+   * The object should have the following properties:
+   * - name: string
+   * - last_name: string
+   * - email: string
+   *
+   * @returns An observable with the added row.
+   */
   addRowToSheet(data: { name: string; last_name: string; email: string; }): Observable<any> {
     return from(this.loadDocs()).pipe(
+      // Load the Google Sheets document
       switchMap(() => {
         this.doc.loadInfo();
         console.log('Loaded docs:', this.doc.title);
         const sheet = this.doc.sheetsByIndex[0];
         console.log('Loaded sheet:', sheet.title);
+        // Add the row to the sheet
         return from(sheet.addRow({
           name: data.name,
           'last name': data.last_name,
           email: data.email,
         }));
       }),
+      // Map the added row to any transformation you need
       map(addedRow => {
         console.log('Added row:', addedRow);
-        return addedRow; // Or any transformation you need
+        return addedRow;
       }),
+      // Catch any errors that may occur
       catchError(error => {
         console.error('Error adding row to Google Sheets:', error);
         return throwError(() => new Error('Failed to add data to Google Sheets'));
-      })
+      }),
     );
   }
+
 
   addRowToSheetTest() {
     this.addRowToSheet({ name: 'John', last_name: 'Doe', email: 'john.doe@example.com' });
