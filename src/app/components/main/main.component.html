@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="arrayOfData" class="mat-elevation-z8">
+<table mat-table [dataSource]="allUsers()" class="mat-elevation-z8">
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Name. </th>
         <td mat-cell *matCellDef="let element"> {{element.name}} </td>
@@ -20,7 +20,7 @@
         <th mat-header-cell *matHeaderCellDef> actions </th>
         <td mat-cell *matCellDef="let element;let i = index"> <button itemid=`deleteBtnID+${i}` mat-mini-fab
                 (click)="deleteUser(i)" class="btn-group"> <mat-icon>delete</mat-icon></button>
-            <button itemid=`updatedBtnID+${i}` mat-mini-fab (click)="toggleBoolDisplayV2(element,i)" class="btn-group">
+            <button itemid=`updatedBtnID+${i}` mat-mini-fab (click)="fectSelctedUser(element,i)" class="btn-group">
                 <mat-icon>update</mat-icon></button>
         </td>
     </ng-container>
@@ -37,6 +37,7 @@
             close
         </mat-icon>
     </button>
+    <!-- Stepper -->
     <mat-vertical-stepper [formGroup]="formUpdate" #stepper (ngSubmit)="onSubmit()" class="to-center formstyle">
         <mat-step label="Name">
             <mat-form-field appearance="fill">
@@ -72,3 +73,35 @@
     </mat-vertical-stepper>
 
 </div>
+
+<mat-horizontal-stepper id="mat-horizontal" [formGroup]="formAddUser" #stepper (ngSubmit)="onSubmitAddUser()" class="to-center formstyle">
+    <mat-step label="Name">
+        <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" placeholder="Peter">
+        </mat-form-field>
+        <button mat-mini-fab matStepperPrevious><mat-icon>arrow_left</mat-icon></button>
+        <button mat-mini-fab matStepperNext><mat-icon>arrow_right</mat-icon></button>
+    </mat-step>
+
+    <mat-step label="Last Name">
+        <mat-form-field appearance="fill">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="last_name" placeholder="Sander">
+        </mat-form-field>
+        <span class="">
+
+            <button mat-mini-fab matStepperPrevious><mat-icon>arrow_left</mat-icon></button>
+            <button mat-mini-fab matStepperNext><mat-icon>arrow_right</mat-icon></button>
+        </span>
+
+    </mat-step>
+    <mat-step label="Email">
+        <mat-form-field appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" placeholder="psander@mail.coza">
+            <button mat-mini-fab matStepperPrevious><mat-icon>arrow_left</mat-icon></button>
+            <button mat-raised-button color="primary" (click)="onSubmitAddUser()">Update User</button>
+        </mat-form-field>
+    </mat-step>
+</mat-horizontal-stepper>
