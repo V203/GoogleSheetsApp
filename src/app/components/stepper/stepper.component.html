@@ -1,42 +1,33 @@
-<mat-horizontal-stepper [linear]="true" #stepper>
-  <mat-step [stepControl]="stepperForm.get('step1')!">
-    <form [formGroup]="stepperForm">
-      <ng-template matStepLabel>Step 1</ng-template>
-      <mat-form-field>
-        <mat-label>Step 1</mat-label>
-        <input matInput formControlName="step1" placeholder="Name" required>
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperNext type="button">Next</button>
-      </div>
-    </form>
+<mat-horizontal-stepper [linear]="true" [formGroup]="formAddUser" #stepper (ngSubmit)="onSubmit()" class="to-center formstyle">
+  <mat-step label="Name">
+    <mat-form-field appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Name" required>
+    </mat-form-field>
+    <div>
+      <button mat-raised-button matStepperNext type="button">Next</button>
+    </div>
   </mat-step>
 
-  <mat-step [stepControl]="stepperForm.get('step2')!">
-    <form [formGroup]="stepperForm">
-      <ng-template matStepLabel>Step 2</ng-template>
-      <mat-form-field>
-        <mat-label>Step 2</mat-label>
-        <input matInput formControlName="step2" placeholder="Last Name" required>
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious type="button">Back</button>
-        <button mat-button matStepperNext type="button">Next</button>
-      </div>
-    </form>
+  <mat-step label="Last Name">
+    <mat-form-field appearance="fill">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="last_name" placeholder="Last Name" required>
+    </mat-form-field>
+    <div>
+      <button mat-raised-button matStepperPrevious>Back</button>
+      <button mat-raised-button matStepperNext type="button">Next</button>
+    </div>
   </mat-step>
 
-  <mat-step [stepControl]="stepperForm.get('step3')!">
-    <form [formGroup]="stepperForm" (ngSubmit)="onSubmit()">
-      <ng-template matStepLabel>Step 3</ng-template>
-      <mat-form-field>
-        <mat-label>Step 3</mat-label>
-        <input matInput formControlName="step3" placeholder="Email" required>
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious type="button">Back</button>
-        <button mat-button type="submit">Finish</button>
-      </div>
-    </form>
+  <mat-step label="Email">
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" placeholder="Email" required>
+    </mat-form-field>
+    <div>
+      <button mat-raised-button matStepperPrevious>Back</button>
+      <button mat-raised-button color="primary" (click)="onSubmit()" type="submit">Finish</button>
+    </div>
   </mat-step>
 </mat-horizontal-stepper>

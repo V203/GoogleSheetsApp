@@ -1,21 +1,32 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import {
-  FormBuilder,
+  FormControl,
   FormGroup,
-  Validators,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
+import { Router } from '@angular/router';
+import { GoogleSpreadsheet } from 'google-spreadsheet';
+import { IUser } from '../../models/iuser';
+import { environment } from '../../../environments/environment';
 import { ServicesService } from '../../services/services.service';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-stepper',
   standalone: true,
   imports: [
+    NgFor,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    NgIf,
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
@@ -27,93 +38,75 @@ import { ServicesService } from '../../services/services.service';
   styleUrls: ['./stepper.component.css'],
 })
 export class StepperComponent implements OnInit {
-  stepperForm: FormGroup;
+  doc: GoogleSpreadsheet;
+  service = inject(ServicesService);
+  displayedColumns = ['name', 'last_name', 'email', 'actions'];
+  title: string = '';
+  cell: string = '';
+  listedUsers: any;
+  updateBoolDisplay = this.service.updateBoolDisplay;
+  selectedUser: any = null;
+  selectedIndex: any = null;
 
-  constructor(
-    private _formBuilder: FormBuilder,
-    private service: ServicesService
-  ) {
-    this.stepperForm = this._formBuilder.group({
-      step1: ['', Validators.required],
-      step2: ['', Validators.required],
-      step3: ['', Validators.required],
+  formAddUser = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+    last_name: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required]),
+  });
+
+  allUsers = this.service.allUsers;
+
+  constructor(private router: Router) {
+    this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, {
+      apiKey: environment.api_key,
     });
   }
 
   async ngOnInit() {
     try {
-      await this.loadGoogleSheetsData();
+      this.cell = await this.service.getCellByGrid(1, 1);
+      await this.service.getRowByNumberAndHeader(1, 'email');
+      this.title = await this.service.getSheetTitle();
+      this.listedUsers = await this.service.getAllRowData();
+      this.service.getAllUsers();
+
+      this.allUsers.set(this.listedUsers);
     } catch (error) {
-      console.error('Error loading Google Sheets data:', error);
+      console.error('Error accessing Google Sheets:', error);
     }
   }
 
-  async loadGoogleSheetsData() {
-    try {
-      // Fetch the row data that corresponds to the steps
-      const data = await this.service.getAllRowData();
-
-      if (data.length >= 3) {
-        this.stepperForm.patchValue({
-          step1: data[0]?.name || '',
-          step2: data[1]?.last_name || '',
-          step3: data[2]?.email || '',
-        });
-      } else {
-        console.error(
-          'Insufficient data from Google Sheets to populate the stepper.'
-        );
-      }
-    } catch (error) {
-      console.error('Error fetching data from Google Sheets:', error);
-    }
-  }
-
-  // async onSubmit() {
-  //   if (this.stepperForm.valid) {
-  //     this.service.addRowToSheet({
-  //       name: this.stepperForm.value.step1,
-  //       last_name: this.stepperForm.value.step2,
-  //       email: this.stepperForm.value.step3,
-  //     }).subscribe({
-  //       next: (result) => {
-  //         console.log('Row successfully added:', result);
-  //       },
-  //       error: (error) => {
-  //         console.error('Error adding row:', error);
-  //       }
-  //     });      
-  //   } else {
-  //     console.error('Form is invalid. Please complete all steps.');
-  //   }
-  // }
+  onSubmit() {
+    if (this.formAddUser?.valid) {
+      // console.log("Selected users:", this.selectedUser);
   
-
-  async onSubmit() {
-    console.log(this.selectedUser);
-
-
-
-    let { name = "", last_name = "", email = "" } = this.stepperForm.value as { name: string, last_name: string, email: string };
-
-    console.log(this.formAddUser.value);
-    console.log(this.selectedIndex);
-
-    this.service.insertUser( name, last_name, email).subscribe({
-      next: (res) => {
-
-        console.log(res);
-        this.service.getAllUsers()
-
-      },
-      error: (error) => {
-
-        console.log(error);
-
+      const { name = '', last_name = '', email = '' } = this.formAddUser.value as {
+        name: string;
+        last_name: string;
+        email: string;
+      };
+  
+      if (!name || !last_name || !email) {
+        // Display an error message to the user
+        console.error('Please fill in all fields');
+        return;
       }
-    })
 
+      console.log("Form value:", this.formAddUser.value);
+      console.log("Selected index:", this.selectedIndex);
+  
+      this.service?.insertUser(name, last_name, email).subscribe({
+        next: (res) => {
+          console.log("User added successfully", res);
+          this.service?.getAllUsers();
+        },
+        error: (error) => {
+          console.log('Error adding user:', error);
+        },
+      });
+    } else {
+      console.error("Form is invalid. Please complete all fields.");
+    }
   }
-
-
+  
 }
