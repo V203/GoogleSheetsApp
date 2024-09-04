@@ -3,13 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-<<<<<<< HEAD
-  ReactiveFormsModule,
-  Validators,
-=======
   Validators,
   ReactiveFormsModule,
->>>>>>> origin/headerAndStyling
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,11 +31,7 @@ export class StepperComponent implements OnInit {
 
   constructor(
     private _formBuilder: FormBuilder,
-<<<<<<< HEAD
-    private service: ServicesService,
-=======
     private service: ServicesService
->>>>>>> origin/headerAndStyling
   ) {
     this.stepperForm = this._formBuilder.group({
       step1: ['', Validators.required],
@@ -70,11 +61,7 @@ export class StepperComponent implements OnInit {
         });
       } else {
         console.error(
-<<<<<<< HEAD
-          'Insufficient data from Google Sheets to populate the stepper.',
-=======
           'Insufficient data from Google Sheets to populate the stepper.'
->>>>>>> origin/headerAndStyling
         );
       }
     } catch (error) {

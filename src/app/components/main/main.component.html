@@ -1,34 +1,4 @@
-<<<<<<< HEAD
-<table mat-table [dataSource]="arrayOfData" class="mat-elevation-z8">
-    <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name. </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-    </ng-container>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="last_name">
-        <th mat-header-cell *matHeaderCellDef> last_name </th>
-        <td mat-cell *matCellDef="let element"> {{element.last_name}} </td>
-    </ng-container>
-
-    <!-- email Column -->
-    <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef> email </th>
-        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> actions </th>
-        <td  mat-cell *matCellDef="let element;let i = index"> <button  mat-mini-fab (click)="deleteUser(i)" class="btn-group"> <mat-icon>delete</mat-icon></button></td>
-    </ng-container>
-
-  
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; let i = index;columns: displayedColumns;" onclick=""></tr>
-
-</table>
-=======
 <table mat-table [dataSource]="arrayOfData" class="mat-elevation-z8">
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Name. </th>
@@ -103,4 +73,4 @@
     </mat-vertical-stepper>
 
 </div>
->>>>>>> origin/headerAndStyling
+
