@@ -1,9 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { environment } from '../../environments/environment';
-import { GoogleAuthOptions, GoogleAuth } from 'google-auth-library';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { IUser } from '../models/iuser';
 
 @Injectable({
@@ -124,13 +123,13 @@ export class ServicesService {
   }
   //deletes the user by taking an index number
   deleteUser(index: number) {
-    return this.http.delete(${environment.CONNECTION_URL}/${index});
+    return this.http.delete(`${environment.CONNECTION_URL}/${index}`);
     
   };
 
   //updates the user by taking in an index number and other name, string and email
   updateUser(index: number, name: string, last_name: string, email: string) {
-    return this.http.put(${environment.CONNECTION_URL}/${index}, {
+    return this.http.put(`${environment.CONNECTION_URL}/${index}`, {
       name,
       last_name,
       email
@@ -138,7 +137,7 @@ export class ServicesService {
   };
 
   getAllUsers(): void {
-    this.http.get<IUser[]>(${environment.CONNECTION_URL}).subscribe(el => {
+    this.http.get<IUser[]>(`${environment.CONNECTION_URL}`).subscribe(el => {
        this.allUsers.set(el)
       // el
     });
