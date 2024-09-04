@@ -6,11 +6,12 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  public username: string = '';
-  public password: string = '';
+
+  public username: string = "";
+  public password: string = "";
   constructor() {}
 
   ngOnInit() {}
@@ -18,4 +19,5 @@ export class LoginComponent {
   onSubmit() {
     console.log(`Username: ${this.username}, Password: ${this.password}`);
   }
+
 }
