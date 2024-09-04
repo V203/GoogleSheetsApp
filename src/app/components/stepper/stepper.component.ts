@@ -69,37 +69,51 @@ export class StepperComponent implements OnInit {
     }
   }
 
-  async onSubmit() {
-    if (this.stepperForm.valid) {
-      this.service.addRowToSheet({
-        name: this.stepperForm.value.step1,
-        last_name: this.stepperForm.value.step2,
-        email: this.stepperForm.value.step3,
-      }).subscribe({
-        next: (result) => {
-          console.log('Row successfully added:', result);
-        },
-        error: (error) => {
-          console.error('Error adding row:', error);
-        }
-      });      
-    } else {
-      console.error('Form is invalid. Please complete all steps.');
-    }
-  }
-  
-
   // async onSubmit() {
   //   if (this.stepperForm.valid) {
-  //     try {
-  //       this.service.addUser(this.stepperForm.value.step1, this.stepperForm.value.step2, this.stepperForm.value.step3);
-  //     } catch (error) {
-  //       console.error('Unexpected error during submission:', error);
-  //     }
+  //     this.service.addRowToSheet({
+  //       name: this.stepperForm.value.step1,
+  //       last_name: this.stepperForm.value.step2,
+  //       email: this.stepperForm.value.step3,
+  //     }).subscribe({
+  //       next: (result) => {
+  //         console.log('Row successfully added:', result);
+  //       },
+  //       error: (error) => {
+  //         console.error('Error adding row:', error);
+  //       }
+  //     });      
   //   } else {
   //     console.error('Form is invalid. Please complete all steps.');
   //   }
   // }
+  
+
+  async onSubmit() {
+    console.log(this.selectedUser);
+
+
+
+    let { name = "", last_name = "", email = "" } = this.stepperForm.value as { name: string, last_name: string, email: string };
+
+    console.log(this.formAddUser.value);
+    console.log(this.selectedIndex);
+
+    this.service.insertUser( name, last_name, email).subscribe({
+      next: (res) => {
+
+        console.log(res);
+        this.service.getAllUsers()
+
+      },
+      error: (error) => {
+
+        console.log(error);
+
+      }
+    })
+
+  }
 
 
 }

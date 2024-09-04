@@ -159,17 +159,14 @@ export class ServicesService {
     });
   }
 
-  /**
-   * Adds a row to the Google Sheets document.
-   *
-   * @param data Object with the data to be inserted into the sheet.
-   * The object should have the following properties:
-   * - name: string
-   * - last_name: string
-   * - email: string
-   *
-   * @returns An observable with the added row.
-   */
+  getAllUsers(): void {
+    this.http.get<IUser[]>(${environment.CONNECTION_URL}).subscribe(el => {
+       this.allUsers.set(el)
+       console.log(this.allUsers());
+      // el
+    });
+  }
+
   addRowToSheet(data: { name: string; last_name: string; email: string; }): Observable<any> {
     return from(this.loadDocs()).pipe(
       // Load the Google Sheets document
@@ -178,16 +175,26 @@ export class ServicesService {
         console.log('Loaded docs:', this.doc.title);
         const sheet = this.doc.sheetsByIndex[0];
         console.log('Loaded sheet:', sheet.title);
-        // Add the row to the sheet
-        return from(sheet.addRow({
-          name: data.name,
-          'last name': data.last_name,
-          email: data.email,
-        }));
+  
+        // Count the number of rows
+        return from(sheet.getRows()).pipe(
+          switchMap(rows => {
+            const newRowIndex = rows.length + 1;
+            console.log(`Current number of rows: ${rows.length}. Adding row at index: ${newRowIndex}`);
+  
+            // Add a new empty row
+            return from(sheet.addRow({})).pipe(
+              switchMap((newRow) => {
+                // Call updateUser to update the newly added row with the stepper data
+                return this.updateUser(newRowIndex, data.name, data.last_name, data.email);
+              })
+            );
+          })
+        );
       }),
       // Map the added row to any transformation you need
       map(addedRow => {
-        console.log('Added row:', addedRow);
+        console.log('Added and updated row:', addedRow);
         return addedRow;
       }),
       // Catch any errors that may occur
@@ -197,6 +204,8 @@ export class ServicesService {
       }),
     );
   }
+  
+  
 
 
   addRowToSheetTest() {
