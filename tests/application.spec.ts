@@ -40,7 +40,9 @@ test('should have a stepper component on the page', async ({ page }) => {
 //   expect(buttonText.textContent()).toBe('delete');
 // });
 
-test('should delete the last row and update the table', async ({ page }) => {
+test.only('should delete the last row and update the table', async ({
+  page,
+}) => {
   await page.goto('http://localhost:4200');
   await page.waitForTimeout(2000);
 

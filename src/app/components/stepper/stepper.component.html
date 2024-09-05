@@ -1,45 +1,33 @@
-<mat-horizontal-stepper [linear]="true" #stepper>
-  <mat-step [stepControl]="stepperForm.get('step1')!">
-    <form [formGroup]="stepperForm" (ngSubmit)="stepper.next()">
-      <ng-template matStepLabel>Step 1</ng-template>
-      <mat-form-field>
-        <mat-label>Step 1</mat-label>
-        <input matInput formControlName="step1" placeholder="Step 1 data">
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperNext>Next</button>
-      </div>
-    </form>
-    <p>Step 1 Control Valid: {{ stepperForm.get('step1')!.valid }}</p>
+<mat-horizontal-stepper [linear]="true" [formGroup]="formAddUser" #stepper (ngSubmit)="onSubmit()" class="to-center formstyle">
+  <mat-step label="Name">
+    <mat-form-field appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Name" required>
+    </mat-form-field>
+    <div>
+      <button mat-raised-button matStepperNext type="button">Next</button>
+    </div>
   </mat-step>
 
-  <mat-step [stepControl]="stepperForm.get('step2')!">
-    <form [formGroup]="stepperForm" (ngSubmit)="stepper.next()">
-      <ng-template matStepLabel>Step 2</ng-template>
-      <mat-form-field>
-        <mat-label>Step 2</mat-label>
-        <input matInput formControlName="step2" placeholder="Step 2 data">
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext>Next</button>
-      </div>
-    </form>
-    <p>Step 2 Control Valid: {{ stepperForm.get('step2')!.valid }}</p>
+  <mat-step label="Last Name">
+    <mat-form-field appearance="fill">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="last_name" placeholder="Last Name" required>
+    </mat-form-field>
+    <div>
+      <button mat-raised-button matStepperPrevious>Back</button>
+      <button mat-raised-button matStepperNext type="button">Next</button>
+    </div>
   </mat-step>
 
-  <mat-step [stepControl]="stepperForm.get('step3')!">
-    <form [formGroup]="stepperForm" (ngSubmit)="onSubmit()">
-      <ng-template matStepLabel>Step 3</ng-template>
-      <mat-form-field>
-        <mat-label>Step 3</mat-label>
-        <input matInput formControlName="step3" placeholder="Step 3 data">
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button type="submit">Finish</button>
-      </div>
-    </form>
-    <p>Step 3 Control Valid: {{ stepperForm.get('step3')!.valid }}</p>
+  <mat-step label="Email">
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" placeholder="Email" required>
+    </mat-form-field>
+    <div>
+      <button mat-raised-button matStepperPrevious>Back</button>
+      <button mat-raised-button color="primary" (click)="onSubmit()" type="submit">Finish</button>
+    </div>
   </mat-step>
 </mat-horizontal-stepper>

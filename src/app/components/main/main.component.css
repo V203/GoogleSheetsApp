@@ -50,3 +50,13 @@
     
     color: black;
 }
+
+table{
+    margin-top: 12px;
+    padding: 12px 12px 12px 12px;
+}
+
+ng-container{
+    margin: 12px 12px 12px 12px;
+}
+
