@@ -46,3 +46,4 @@ Thumbs.db
 /playwright/.cache/
 
 /tests-examples/
+trace.zip
