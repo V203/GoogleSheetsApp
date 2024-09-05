@@ -1,7 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { environment } from '../../environments/environment';
-import { GoogleAuthOptions, GoogleAuth } from 'google-auth-library';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IUser } from '../models/iuser';
@@ -14,20 +13,17 @@ export class ServicesService {
   doc: GoogleSpreadsheet;
   title!: string;
 
-  updateBoolDisplay = signal<boolean>(false)
-  
+  updateBoolDisplay = signal<boolean>(false);
+  allUsers = signal<IUser[]>([]);
+
   constructor(private http: HttpClient) {
     this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key });
-    
-    this.doc.loadInfo()
+    this.doc.loadInfo();
+    this.getAllUsers()
   }
 
-  async ngOnInit() {
-    try {
-      this.doc.title;
-    } catch (error) {
-      console.log(error);
-    }
+  ngOnInit() {
+
   }
 
   async loadDocs() {
@@ -76,28 +72,6 @@ export class ServicesService {
     }
   }
 
-  // to be fully implemented
-  async createSheet(sheetHeaders: Array<string>) {
-    try {
-      // ["name","last_name","email","phone_number"]
-      await this.doc.loadInfo();
-      // await this.doc.addSheet({headerValues:sheetHeaders} )
-
-      let sheet = this.doc.sheetsByIndex[0];
-
-      await sheet.loadCells();
-      // await sheet.addRow()
-      let rows = await sheet.getRows();
-      rows[1];
-      rows[0].set('A4', 'hello');
-      await rows[0].save();
-      console.log();
-      // console.log(rows[1].get("hello"));
-      // await rows[3].save()
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async getRowByNumberAndHeader(row: number, headerParams: string) {
     try {
@@ -106,7 +80,7 @@ export class ServicesService {
         offset: 0,
         limit: 2,
       });
-      console.log(await sheet[row].get(headerParams));
+      // console.log(await sheet[row].get(headerParams));
       return await sheet[row].get(headerParams);
     } catch (error) {
       console.log(error);
@@ -147,10 +121,13 @@ export class ServicesService {
       email,
     });
   }
+
   //deletes the user by taking an index number
   deleteUser(index: number) {
     return this.http.delete(`${environment.CONNECTION_URL}/${index}`);
-  }
+    
+  };
+
   //updates the user by taking in an index number and other name, string and email
   updateUser(index: number, name: string, last_name: string, email: string) {
     return this.http.put(`${environment.CONNECTION_URL}/${index}`, {
@@ -160,7 +137,12 @@ export class ServicesService {
     })
   };
 
-
- 
+  getAllUsers(): void {
+    this.http.get<IUser[]>(`${environment.CONNECTION_URL}`).subscribe(el => {
+       this.allUsers.set(el)
+       console.log(this.allUsers());
+      // el
+    });
+  }
 
 }

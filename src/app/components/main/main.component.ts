@@ -13,6 +13,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { IUser } from '../../models/iuser';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HeaderComponent } from "../header/header.component";
+import { SpinnerComponent } from '../spinner/spinner.component';
+import { ListUsersComponent } from '../list-users/list-users.component';
 
 
 @Component({
@@ -30,6 +34,10 @@ import { IUser } from '../../models/iuser';
     MatButtonModule,
     CommonModule,
     ReactiveFormsModule,
+    MatProgressSpinnerModule,
+    HeaderComponent,
+    SpinnerComponent,
+    ListUsersComponent
   ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
@@ -42,48 +50,45 @@ export class MainComponent implements OnInit {
   displayedColumns = ["name", "last_name", "email", "actions"];
   title: string = "";
   cell: string = "";
-  arrayOfData: any;
+  listedUsers: any;
   updateBoolDisplay = this.service.updateBoolDisplay;
-  selectedUser:any = null
-  selectedIndex:any = null
-  
-  
+  selectedUser: any = null
+  selectedIndex: any = null
+  loading = false
+
+
   formUpdate = new FormGroup({
-    name: new FormControl<string>(''),
-    last_name: new FormControl<string>(''),
-    email: new FormControl<string>(''),
-  })
+    name: new FormControl<string>(this.selectedUser ? this.selectedUser.name : ""),
+    last_name: new FormControl<string>(this.selectedUser ? this.selectedUser.last_name : ""),
+    email: new FormControl<string>(this.selectedUser ? this.selectedUser.email : ""),
+  });
+
+  formAddUser = new FormGroup(
+    {
+      name: new FormControl("", [Validators.required]),
+      last_name: new FormControl("", [Validators.required]),
+      email: new FormControl("", [Validators.required]),
+    }
+  )
+
+  allUsers = this.service.allUsers
+
   constructor(private router: Router) {
     this.doc = new GoogleSpreadsheet(environment.GOOGLE_SHEETS_DOCUMENT_ID, { apiKey: environment.api_key });
-
   }
 
   async ngOnInit() {
-   
+
     try {
 
-      // this.service.insertUser("Maven uodated", "Pain", "jgjgj@mp.co.za").subscribe(
-      //   {
-      //   next:(res)=> {
-  
-      //     if(res){
-      //       console.log(res);
-      //     }
-      //   },error:(error) =>{
-      //     if(error){
-      //       console.log(error);
-      //             }
-      //   } 
-      // });
-     
-      console.log(this.updateBoolDisplay());
+
       this.cell = await this.service.getCellByGrid(1, 1)
       await this.service.getRowByNumberAndHeader(1, "email");
       this.title = await this.service.getSheetTitle();
-      this.arrayOfData = await this.service.getAllRowData()
-   
+      this.listedUsers = await this.service.getAllRowData()
+      this.service.getAllUsers();
 
-
+      this.allUsers.set(this.listedUsers)
 
     } catch (error) {
       console.error('Error accessing Google Sheets:', error);
@@ -91,11 +96,17 @@ export class MainComponent implements OnInit {
   };
 
   deleteUser(id: number) {
-
+    this.loading = true
     this.service.deleteUser(id).subscribe({
+
       next: (res) => {
+
         console.log(res);
+        this.service.getAllUsers();
+        this.loading = false
+
         if (res) {
+
           this.router.navigate(["/"])
 
         }
@@ -105,44 +116,65 @@ export class MainComponent implements OnInit {
   };
 
 
-  toggleBoolDisplay() {
-    this.updateBoolDisplay.set(!this.updateBoolDisplay())
+  // toggleBoolDisplay() {
+  //   this.updateBoolDisplay.set(!this.updateBoolDisplay())
 
-  }
+  // };
 
-  toggleBoolDisplayV2(person:IUser,index:number) {
-    this.selectedUser = person;
-    this.selectedIndex = index
+  // fectSelctedUser(person: IUser, index: number) {
+  //   this.selectedUser = person;
+  //   // console.log(person);
+  //   // console.log(this.selectedUser);
+  //   this.selectedIndex = index;
+  //   this.formUpdate.setValue (
+  //     {
+  //       name: person.name,
+  //       last_name: person.last_name,
+  //       email : person.email
+  //     } )
+  // };
+
+
+  // onSubmitUpateUser() {
+  //   this.loading = true
     
-    
-    // this.updateBoolDisplay.set(!this.updateBoolDisplay())
+  //   console.log(this.selectedUser);
+  //   let { name = "", last_name = "", email = "" } = this.formUpdate.value as { name: string, last_name: string, email: string };
 
-  }
+  //   this.service.updateUser(this.selectedIndex, name, last_name, email).subscribe({
+  //     next: (res) => {
 
+  //       console.log(res);
+  //       this.service.getAllUsers()
+  //       this.loading = false
+  //     },
+  //     error: (error) => {
 
-  onSubmit(){
-    console.log(this.selectedUser);
+  //       console.log(error);
 
-    
+  //     }
+  //   })
 
-    let {name="",last_name="",email=""} = this.formUpdate.value as { name: string, last_name: string, email: string }
-  console.log(this.formUpdate.value);
-  console.log(this.selectedIndex);
-  
-    this.service.updateUser(this.selectedIndex,name,last_name,email).subscribe({
-      next: (res)=> {
+  //   this.selectedUser = null
+  //   this.service.getAllUsers()
+
+  // }
+
+  onSubmitAddUser() {
+    let { name = "", last_name = "", email = "" } = this.formAddUser.value as { name: string, last_name: string, email: string };
+    this.loading = true
+    this.service.insertUser(name, last_name, email).subscribe({
+      next: (res) => {
+
         console.log(res);
-        
+        this.service.getAllUsers()
+        this.loading = false
       },
-      error : (error)=> {
+      error: (error) => {
+
         console.log(error);
-        
+
       }
     })
-    this.selectedUser = null
-    
   }
-
-
-
 };
