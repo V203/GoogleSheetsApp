@@ -13,7 +13,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
 import { IUser } from '../../models/iuser';
-import { effect } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HeaderComponent } from "../header/header.component";
+import { SpinnerComponent } from '../spinner/spinner.component';
+import { ListUsersComponent } from '../list-users/list-users.component';
 
 
 @Component({
@@ -31,6 +34,10 @@ import { effect } from '@angular/core';
     MatButtonModule,
     CommonModule,
     ReactiveFormsModule,
+    MatProgressSpinnerModule,
+    HeaderComponent,
+    SpinnerComponent,
+    ListUsersComponent
   ],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
@@ -47,6 +54,7 @@ export class MainComponent implements OnInit {
   updateBoolDisplay = this.service.updateBoolDisplay;
   selectedUser: any = null
   selectedIndex: any = null
+  loading = false
 
 
   formUpdate = new FormGroup({
@@ -57,9 +65,9 @@ export class MainComponent implements OnInit {
 
   formAddUser = new FormGroup(
     {
-      name: new FormControl("",[Validators.required]),
-      last_name: new FormControl("",[Validators.required]),
-      email: new FormControl("",[Validators.required]),
+      name: new FormControl("", [Validators.required]),
+      last_name: new FormControl("", [Validators.required]),
+      email: new FormControl("", [Validators.required]),
     }
   )
 
@@ -73,13 +81,13 @@ export class MainComponent implements OnInit {
 
     try {
 
-      
+
       this.cell = await this.service.getCellByGrid(1, 1)
       await this.service.getRowByNumberAndHeader(1, "email");
       this.title = await this.service.getSheetTitle();
       this.listedUsers = await this.service.getAllRowData()
       this.service.getAllUsers();
-      
+
       this.allUsers.set(this.listedUsers)
 
     } catch (error) {
@@ -88,13 +96,14 @@ export class MainComponent implements OnInit {
   };
 
   deleteUser(id: number) {
-
+    this.loading = true
     this.service.deleteUser(id).subscribe({
 
       next: (res) => {
 
         console.log(res);
-        this.service.getAllUsers()
+        this.service.getAllUsers();
+        this.loading = false
 
         if (res) {
 
@@ -107,62 +116,59 @@ export class MainComponent implements OnInit {
   };
 
 
-  toggleBoolDisplay() {
-    this.updateBoolDisplay.set(!this.updateBoolDisplay())
+  // toggleBoolDisplay() {
+  //   this.updateBoolDisplay.set(!this.updateBoolDisplay())
 
-  };
+  // };
 
-  fectSelctedUser(person: IUser, index: number) {
-    this.selectedUser = person;
-    this.selectedIndex = index;
-  };
+  // fectSelctedUser(person: IUser, index: number) {
+  //   this.selectedUser = person;
+  //   // console.log(person);
+  //   // console.log(this.selectedUser);
+  //   this.selectedIndex = index;
+  //   this.formUpdate.setValue (
+  //     {
+  //       name: person.name,
+  //       last_name: person.last_name,
+  //       email : person.email
+  //     } )
+  // };
 
 
-  onSubmit() {
+  // onSubmitUpateUser() {
+  //   this.loading = true
     
+  //   console.log(this.selectedUser);
+  //   let { name = "", last_name = "", email = "" } = this.formUpdate.value as { name: string, last_name: string, email: string };
 
+  //   this.service.updateUser(this.selectedIndex, name, last_name, email).subscribe({
+  //     next: (res) => {
 
+  //       console.log(res);
+  //       this.service.getAllUsers()
+  //       this.loading = false
+  //     },
+  //     error: (error) => {
 
-    let { name = "", last_name = "", email = "" } = this.formUpdate.value as { name: string, last_name: string, email: string };
+  //       console.log(error);
 
-    console.log(this.formUpdate.value);
-    console.log(this.selectedIndex);
+  //     }
+  //   })
 
-    this.service.updateUser(this.selectedIndex, name, last_name, email).subscribe({
-      next: (res) => {
+  //   this.selectedUser = null
+  //   this.service.getAllUsers()
 
-        console.log(res);
-        this.service.getAllUsers()
-
-      },
-      error: (error) => {
-
-        console.log(error);
-
-      }
-    })
-
-    this.selectedUser = null
-    this.service.getAllUsers()
-
-  }
+  // }
 
   onSubmitAddUser() {
-    console.log(this.selectedUser);
-
-
-
     let { name = "", last_name = "", email = "" } = this.formAddUser.value as { name: string, last_name: string, email: string };
-
-    console.log(this.formAddUser.value);
-    console.log(this.selectedIndex);
-
-    this.service.insertUser( name, last_name, email).subscribe({
+    this.loading = true
+    this.service.insertUser(name, last_name, email).subscribe({
       next: (res) => {
 
         console.log(res);
         this.service.getAllUsers()
-
+        this.loading = false
       },
       error: (error) => {
 
@@ -170,11 +176,5 @@ export class MainComponent implements OnInit {
 
       }
     })
-
-    
-
   }
-
-
-
 };
