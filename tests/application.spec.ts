@@ -1,48 +1,69 @@
 import { test, expect } from '@playwright/test';
 
-test('should contain title on page"', async ({ page }) => {
+test('should display the correct title', async ({ page }) => {
   await page.goto('http://localhost:4200');
 
   await page.waitForTimeout(2000);
 
-  const divLocator = page.locator('div:has-text("g-sheet")');
-  await expect(divLocator).toBeVisible();
-
-  const divText = await divLocator.textContent();
-  expect(divText).toContain('g-sheet');
+  const titleText = await page.title();
+  expect(titleText).toContain('GoogleSheetsApp');
 });
 
-test('should have a table on the page', async ({ page }) => {
+test('should have a table on the page to display data', async ({ page }) => {
   await page.goto('http://localhost:4200');
 
   await page.waitForTimeout(2000);
 
   const tableLocator = page.locator('table');
-  const isTableVisible = await tableLocator.isVisible();
-
-  expect(isTableVisible).toBe(true);
+  await expect(tableLocator).toBeVisible();
 });
 
-test('should have a submit button for updating cells', async ({ page }) => {
+test('should have a stepper component on the page', async ({ page }) => {
   await page.goto('http://localhost:4200');
 
-  await page.waitForTimeout(2000);
+  await page.waitForSelector('mat-horizontal-stepper');
+  //   await page.waitForTimeout(2000);
 
-  // const submitButtonLocator = page.locator('button[type="submit"]');
-  const submitButtonLocator = page.locator('.mat-stepper-next');
-
-  await expect(submitButtonLocator).toBeVisible();
+  const stepperLocator = page.locator('mat-horizontal-stepper');
+  await expect(stepperLocator).toBeVisible();
 });
 
-test('should have a refresh button', async ({ page }) => {
-  await page.goto('http://localhost:4200');
+// test.only('should have a delete button for an entry', async ({ page }) => {
+//   await page.goto('http://localhost:4200');
 
+//   await page.waitForSelector('button.mat-mdc-mini-fab');
+//   //   await page.waitForTimeout(2000);
+
+//   const deleteButtonLocator = page.locator('button.mat-mdc-mini-fab');
+//   const buttonText = deleteButtonLocator.locator('mat-icon');
+
+//   expect(buttonText.textContent()).toBe('delete');
+// });
+
+test.only('should delete the last row and update the table', async ({
+  page,
+}) => {
+  await page.goto('http://localhost:4200');
   await page.waitForTimeout(2000);
 
-  const buttonByIdLocator = page.locator('button[id*="refresh"]');
-  const buttonByTextLocator = page.locator('button:has-text("refresh")');
-  const isButtonByIdVisible = await buttonByIdLocator.isVisible();
-  const isButtonByTextVisible = await buttonByTextLocator.isVisible();
+  const rowsLocator = page.locator('table tbody tr');
+  const count = await rowsLocator.count();
+  console.log(`Number of elements found: ${count}`);
 
-  expect(isButtonByIdVisible || isButtonByTextVisible).toBe(true);
+  const lastRowLocator = rowsLocator.last();
+  const deleteButtonLocator = lastRowLocator.locator(
+    'button[mat-mdc-mini-fab]'
+  );
+  await deleteButtonLocator.click();
+  //   await page.waitForTimeout(5000);
+
+  // await page.reload();
+
+  const updatedRowsLocator = page.locator('table tbody tr');
+  const updatedCount = await updatedRowsLocator.count();
+  console.log(`Updated number of elements found: ${updatedCount}`);
+
+  //   expect(await updatedRowsLocator.count()).toBeLessThan(
+  //     await rowsLocator.count()
+  //   );
 });

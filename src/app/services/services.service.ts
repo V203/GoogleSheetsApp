@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { IUser } from '../models/iuser';
 
 @Injectable({
@@ -121,6 +121,7 @@ export class ServicesService {
       email,
     });
   }
+
   //deletes the user by taking an index number
   deleteUser(index: number) {
     return this.http.delete(`${environment.CONNECTION_URL}/${index}`);
@@ -139,8 +140,10 @@ export class ServicesService {
   getAllUsers(): void {
     this.http.get<IUser[]>(`${environment.CONNECTION_URL}`).subscribe(el => {
        this.allUsers.set(el)
+       console.log(this.allUsers());
       // el
     });
   }
 
 }
+
