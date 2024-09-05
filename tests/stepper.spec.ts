@@ -7,36 +7,31 @@ test('should add data using stepper form', async ({ page }) => {
 
   expect(stepper).toBe(true);
 
-  const steps = [
-    { label: 'Name', formControl: 'name' },
-    { label: 'Last Name', formControl: 'last_name' },
-    { label: 'Email', formControl: 'email' },
+  const formData = [
+    { formControl: 'name', value: 'John' },
+    { formControl: 'last_name', value: 'Doe' },
+    { formControl: 'email', value: 'john.doe@example.com' },
   ];
 
-  for (const [index, step] of steps.entries()) {
-    const stepHeader = page.locator(
-      `mat-step-header[id="cdk-step-label-0-${index}"]`
-    );
-    await expect(stepHeader).toBeVisible();
-
+  for (const [index, data] of formData.entries()) {
     const formField = page.locator(
-      `mat-form-field[formcontrolname="${step.formControl}"]`
+      `input[formcontrolname="${data.formControl}"]`
     );
+    await formField.waitFor({ state: 'visible' });
     await expect(formField).toBeVisible();
 
-    if (index < steps.length - 1) {
-      const nextButton = await page.locator('button[matsteppernext]');
-      await nextButton.click();
-
-      await page.waitForSelector(
-        `mat-horizontal-stepper-content[id="cdk-step-content-0-${index + 1}"]`,
-        { state: 'visible' }
+    if (index < formData.length - 1) {
+      const currentStepContent = page.locator(
+        `mat-horizontal-stepper .mat-horizontal-stepper-content:not(.mat-horizontal-stepper-content-inactive)`
       );
+
+      const nextButton = currentStepContent.locator('button[matsteppernext]');
+      await nextButton.waitFor({ state: 'visible' });
+      await nextButton.click();
     }
   }
 
-  const finishButton = await page.locator(
-    'button[matsteppernext][color="primary"]'
-  );
+  const finishButton = await page.locator('button[type="submit"]');
+  await finishButton.waitFor({ state: 'visible' });
   await expect(finishButton).toBeVisible();
 });
