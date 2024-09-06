@@ -1,6 +1,6 @@
 import { test, expect, Browser, BrowserContext, Page } from '@playwright/test';
 
-test('should add data using stepper form', async ({ browser }) => {
+test.only('should add data using stepper form', async ({ browser }) => {
   const context: BrowserContext = await browser.newContext();
   await context.tracing.start({ screenshots: true, snapshots: true });
   const page: Page = await context.newPage();
@@ -12,7 +12,7 @@ test('should add data using stepper form', async ({ browser }) => {
   const formData = [
     { formControl: 'name', value: 'John' },
     { formControl: 'last_name', value: 'Doe' },
-    { formControl: 'email', value: 'johndoe@example.com' },
+    { formControl: 'email', value: 'john@doe.com' },
   ];
 
   for (const [index, data] of formData.entries()) {
@@ -38,4 +38,17 @@ test('should add data using stepper form', async ({ browser }) => {
 
   await context.tracing.stop({ path: 'trace.zip' });
   await context.close();
+});
+
+test('should display the added data in the table', async ({ page }) => {
+  await page.goto('http://localhost:4200');
+  await page.waitForTimeout(5000);
+
+  const name = page.locator('table >> text="John"');
+  const lastName = page.locator('table >> text="Doe"');
+  const email = page.locator('table >> text="john@doe.com"');
+
+  await expect(name).toBeVisible();
+  await expect(lastName).toBeVisible();
+  await expect(email).toBeVisible();
 });
